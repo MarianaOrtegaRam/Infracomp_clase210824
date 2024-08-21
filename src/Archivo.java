@@ -18,9 +18,12 @@ public class Archivo {
     */
 
     public synchronized  void entroEscribir(){
-        /*
+
+        /* 
+        
+    
         Se que puedo usar el recurso cuando hay 0 lectores
-        */
+    
         if ((nLectores > 0) || (nRedactores > 0)){
             try {
                 wait();
@@ -32,10 +35,27 @@ public class Archivo {
         nRedactores++;
         //aca se pueden quedar esperando mucho tiempo 
 
+        */
+
+
+
+        while ((nLectores > 0) || (nRedactores > 0)){
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        nRedactores++;
+        //aca se pueden quedar esperando mucho tiempo 
+
+        
     }
 
     public synchronized  void entroLeer() {
-        if(nRedactores > 0){
+        /*
+        if (nRedactores > 0){
             try {
                 wait();
             } catch (InterruptedException e) {
@@ -45,6 +65,24 @@ public class Archivo {
         }
         nLectores++;
         //aca son educaditos y van entrando lento, es como si hay un guardia 
+        Habrá alhuno que llegue primero, si por ejemplo es iun lector, le suma uno a los lectores, y los otros 
+        threads esperando quedaron despiertos, entonces por ejemplo si entra un redactor se los suma,entonces hay redactors sy lectores en el mismo archivo
+        
+        */
+
+
+        //Ahora si uso el while, evito que se despierten los demas, entonces cuando entren los demas threads van a tener que revisar la condición 
+        while (nRedactores > 0){
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        nLectores++;
+        //aca son educaditos y van entrando lento, es como si hay un guardia 
+        
         
     }
 
